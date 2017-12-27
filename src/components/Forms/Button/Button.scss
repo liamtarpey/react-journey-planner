@@ -1,0 +1,12 @@
+.button {
+    background-color: #4198f4;
+    width: 100%;
+    border: none;
+    padding: 6px 24px;
+    color: white;
+    font-size: 18px;
+
+    &:focus {
+        outline: none;
+    }
+}
