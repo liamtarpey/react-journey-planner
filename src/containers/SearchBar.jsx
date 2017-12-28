@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 // Components
 import FormInput from 'components/Forms/FormInput/FormInput.jsx';
 import Button from 'components/Forms/Button/Button.jsx';
+
+// Actions
+import { updateRoutes, resetRoutes } from 'actions/routes.actions.js';
 
 // Services
 import JourneyPlanner from 'services/JourneyPlanner.service.js';
@@ -22,9 +27,15 @@ class SearchBar extends Component {
 
         this.handleInputChange = this.handleInputChange.bind(this);
         this.submitForm = this.submitForm.bind(this);
+        this.resetForm = this.resetForm.bind(this);
         this.stateSetter = this.stateSetter.bind(this);
     }
 
+    /**
+     * Handles updating of form fields
+     * @param {Event}
+     * @param {String} field | field we want to update in state
+     */
     handleInputChange(e, field) {
         
         if (e) {
@@ -44,17 +55,25 @@ class SearchBar extends Component {
             e.preventDefault();
         }
 
-        const onSuccess = (response) => {
-            console.log('RES:', response);
-            // update map
-        };
-
         const onError = (error) => {
             console.log('ERR:', error);
-            // throw error
         };  
 
+        const onSuccess = (response) => {
+            console.log('RES:', response);
+            if (!response.routes || !response.routes.length) {
+                onError('No routes found!');
+                return false;
+            }
+
+            this.props.dispatchUpdateRoutes(response.routes);
+        };
+
         JourneyPlanner.getFromTo(this.state.depart, this.state.end).then(onSuccess).catch(onError);
+    }
+
+    resetForm() {
+        this.props.dispatchResetRoutes();
     }
 
     /**
@@ -87,9 +106,23 @@ class SearchBar extends Component {
                         handleClick={ this.submitForm }
                     />
                 </form>
+                <Button 
+                        value="Reset"
+                        handleClick={ this.resetForm }
+                    />
             </div>
         );
     }
 }
 
-export default SearchBar;
+SearchBar.propTypes = {
+    dispatchUpdateRoutes: PropTypes.func.isRequired,
+    dispatchResetRoutes: PropTypes.func.isRequired
+};
+
+const mapDispatchToProps = dispatch => ({
+    dispatchUpdateRoutes: routes => dispatch(updateRoutes(routes)),
+    dispatchResetRoutes: () => dispatch(resetRoutes())
+});
+
+export default connect(null, mapDispatchToProps)(SearchBar);

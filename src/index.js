@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 
 // Project root
 import Root from './Root.jsx';
@@ -10,7 +11,12 @@ import Store from 'store/store.js';
 // Styles
 import './main.scss';
 
+const store = Store();
+const RootElement = document.getElementById('root');
+
 ReactDOM.render(
-    <Root store={Store()} />, 
-    document.getElementById('root')
+    <Provider store={store}>
+        <Root />
+    </Provider>,
+    RootElement
 );

@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
 
 // Reducers
-import MapReducer from 'reducers/map.reducer.js';
+import RoutesReducer from 'reducers/routes.reducer.js';
 
 export default combineReducers({
-    map: MapReducer
+    routes: RoutesReducer
 });
