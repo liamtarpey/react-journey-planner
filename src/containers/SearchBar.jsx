@@ -2,12 +2,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+// MOCK DATA
+import MOCK_DATA from '../../MOCK_DATA.json';
+
 // Components
 import FormInput from 'components/Forms/FormInput/FormInput.jsx';
 import Button from 'components/Forms/Button/Button.jsx';
 
 // Actions
 import { updateRoutes, resetRoutes } from 'actions/routes.actions.js';
+import { updateView } from 'actions/view.actions.js';
 
 // Services
 import JourneyPlanner from 'services/JourneyPlanner.service.js';
@@ -22,12 +26,14 @@ class SearchBar extends Component {
 
         this.state = {
             depart: null,
-            end: null
+            end: null,
+            view: 'results'
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
         this.submitForm = this.submitForm.bind(this);
         this.resetForm = this.resetForm.bind(this);
+        this.switchView = this.switchView.bind(this);
         this.stateSetter = this.stateSetter.bind(this);
     }
 
@@ -76,6 +82,21 @@ class SearchBar extends Component {
         this.props.dispatchResetRoutes();
     }
 
+    switchView(e) {
+
+        if (e) {
+            e.preventDefault();
+        }
+
+        if (this.state.view === 'results') {
+            this.stateSetter('view', 'map');
+            this.props.dispatchSwitchView('map');
+        } else {
+            this.stateSetter('view', 'results');
+            this.props.dispatchSwitchView('results');
+        }
+    }
+
     /**
      * Updates (sets) the state of the component
      * @param {String} field - the field to update
@@ -110,6 +131,11 @@ class SearchBar extends Component {
                         value="Reset"
                         handleClick={ this.resetForm }
                     />
+                <a 
+                    href="#" 
+                    onClick={ e => this.switchView(e) }>
+                    Switch view
+                </a>
             </div>
         );
     }
@@ -117,12 +143,14 @@ class SearchBar extends Component {
 
 SearchBar.propTypes = {
     dispatchUpdateRoutes: PropTypes.func.isRequired,
-    dispatchResetRoutes: PropTypes.func.isRequired
+    dispatchResetRoutes: PropTypes.func.isRequired,
+    dispatchSwitchView: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = dispatch => ({
     dispatchUpdateRoutes: routes => dispatch(updateRoutes(routes)),
-    dispatchResetRoutes: () => dispatch(resetRoutes())
+    dispatchResetRoutes: () => dispatch(resetRoutes()),
+    dispatchSwitchView: (view) => dispatch(updateView(view))
 });
 
 export default connect(null, mapDispatchToProps)(SearchBar);

@@ -12,6 +12,7 @@ module.exports = {
         loaders: [
             {
                 test: /\.jsx?$/,
+                exclude: /(mapbox-gl)\.js$/,
                 loader: 'babel-loader'
             },
             {
